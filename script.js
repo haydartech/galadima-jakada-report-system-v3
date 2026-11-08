@@ -1,0 +1,937 @@
+'use strict';
+
+const $ = id => document.getElementById(id);
+
+const CLASSES = [
+  'Pre-Nursery', 'Nursery 1', 'Nursery 2',
+  'Primary 1', 'Primary 2', 'Primary 3',
+  'Primary 4', 'Primary 5'
+];
+
+const NURSERY = [
+  'English Skills',
+  'Mathematics Skills',
+  'Pre-School Science / Social Habits',
+  'Shapes and Colours',
+  'Arabic Language',
+  'Rhymes'
+];
+
+const PRIMARY = [
+  'English Language',
+  'Mathematics',
+  'Basic Science',
+  'Verbal Reasoning',
+  'Quantitative Reasoning',
+  'Physical and Health Education',
+  'Islamic Studies',
+  'Agricultural Science',
+  'Social Studies',
+  'Computer Science'
+];
+
+const BASE_SUBJECTS = Object.fromEntries(
+  CLASSES.map(c => [
+    c,
+    c.startsWith('Pre-') || c.startsWith('Nursery')
+      ? [...NURSERY]
+      : [...PRIMARY]
+  ])
+);
+
+let subjectSettings = loadSubjectSettings();
+
+function loadSubjectSettings() {
+  try {
+    return {
+      ...BASE_SUBJECTS,
+      ...JSON.parse(localStorage.getItem('gja_subjects') || '{}')
+    };
+  } catch {
+    return { ...BASE_SUBJECTS };
+  }
+}
+
+function saveSubjectSettings() {
+  localStorage.setItem('gja_subjects', JSON.stringify(subjectSettings));
+  $('subjectSaveStatus').textContent = 'Saved on this device';
+}
+
+/* GRADE SYSTEM */
+
+function grade(n) {
+  return n >= 75 ? 'A' :
+         n >= 65 ? 'B' :
+         n >= 50 ? 'C' :
+         n >= 45 ? 'D' :
+         n >= 40 ? 'E' : 'F';
+}
+
+function remark(g) {
+  return {
+    A: 'Excellent',
+    B: 'Very Good',
+    C: 'Good',
+    D: 'Fair',
+    E: 'Pass',
+    F: 'Needs Support'
+  }[g] || '—';
+}
+
+function early() {
+  return [
+    'Pre-Nursery',
+    'Nursery 1',
+    'Nursery 2',
+    'Primary 1',
+    'Primary 2'
+  ].includes($('className').value);
+}
+
+/* TEACHER COMMENTS */
+
+function teacherText(g) {
+  const a = {
+    A: 'Excellent work! Keep learning and doing your best.',
+    B: 'Very good work! Keep practising to improve further.',
+    C: 'Good effort! More practice will help you improve.',
+    D: 'You are making progress. Please keep practising.',
+    E: 'You have achieved a pass. Keep practising to improve.',
+    F: 'You need more support and practice. Keep trying!'
+  };
+
+  const p = {
+    A: 'The pupil has demonstrated outstanding academic performance and a strong understanding of the subjects studied.',
+    B: 'The pupil has demonstrated very good academic progress and a commendable understanding of most subjects.',
+    C: 'The pupil has demonstrated satisfactory academic progress but should work consistently to achieve better results.',
+    D: 'The pupil has shown some progress but requires additional effort and regular practice to improve academic performance.',
+    E: 'The pupil has attained the minimum pass standard and should strengthen understanding through regular practice.',
+    F: 'The pupil needs significant academic support, consistent practice, and closer supervision to improve learning outcomes.'
+  };
+
+  return (early() ? a : p)[g] || '';
+}
+
+/* PROPRIETOR COMMENTS */
+
+function proprietorText(g) {
+  const a = {
+    A: 'Wonderful achievement! Keep up the excellent effort and continue to shine.',
+    B: 'Well done! Keep working hard and aim for even greater progress.',
+    C: 'Good progress. With regular practice, you can achieve even more.',
+    D: 'Keep trying. More practice and support will help you make better progress.',
+    E: 'A pass has been achieved. We encourage more effort to reach a stronger result.',
+    F: 'We encourage you to keep trying and work closely with your teacher to improve.'
+  };
+
+  const p = {
+    A: 'Outstanding achievement. The pupil’s results reflect dedication and a commendable commitment to learning. Maintain this excellent standard.',
+    B: 'A commendable performance. Continued effort and consistent study should help the pupil attain an even higher standard.',
+    C: 'The pupil has made reasonable progress. Greater consistency and focused revision are recommended to strengthen overall achievement.',
+    D: 'The pupil would benefit from a more structured study routine, additional practice, and regular monitoring of progress.',
+    E: 'The pupil has attained a pass standard. A focused study routine and regular revision are recommended to improve future performance.',
+    F: 'The pupil requires a targeted improvement plan, regular revision, and close collaboration between home and school to strengthen learning outcomes.'
+  };
+
+  return (early() ? a : p)[g] || '';
+}
+
+/* ADMISSION NUMBER */
+
+function admission() {
+  const suffix = $('admissionSuffix').value
+    .replace(/\D/g, '')
+    .slice(0, 4);
+
+  $('admissionSuffix').value = suffix;
+
+  const year = $('session').value.split('/')[0];
+
+  $('admissionPrefix').textContent = 'GJA/' + year + '/';
+
+  return 'GJA/' + year + '/' + suffix.padStart(4, '0');
+}
+
+/* HTML TEXT SAFETY */
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[c]));
+}
+
+/* SUBJECT ROW */
+
+function makeRow(s = '') {
+  const tr = document.createElement('tr');
+
+  tr.innerHTML = `
+    <td>
+      <input class="sub" list="subjectOptions"
+        value="${esc(s)}" placeholder="Subject name" required>
+    </td>
+    <td>
+      <input class="ca" type="number" min="0" max="40"
+        step="1" placeholder="0–40">
+    </td>
+    <td>
+      <input class="ex" type="number" min="0" max="60"
+        step="1" placeholder="0–60">
+    </td>
+    <td class="total">—</td>
+    <td class="g">—</td>
+    <td>
+      <button type="button" class="secondary-btn remove"
+        aria-label="Remove subject">×</button>
+    </td>
+  `;
+
+  tr.querySelectorAll('input').forEach(input => {
+    input.addEventListener('input', calc);
+  });
+
+  tr.querySelector('.remove').onclick = () => {
+    tr.remove();
+    calc();
+  };
+
+  return tr;
+}
+
+function val(input) {
+  return input.value.trim() === '' ? null : Number(input.value);
+}
+
+/* CALCULATE RESULTS */
+
+function calc() {
+  let marks = [];
+  let sum = 0;
+  let cas = 0;
+  let exs = 0;
+  let invalid = false;
+
+  document.querySelectorAll('#subjectRows tr').forEach(tr => {
+    const ci = tr.querySelector('.ca');
+    const ei = tr.querySelector('.ex');
+
+    const c = val(ci);
+    const e = val(ei);
+
+    const cb = c !== null &&
+      (c < 0 || c > 40 || !Number.isFinite(c));
+
+    const eb = e !== null &&
+      (e < 0 || e > 60 || !Number.isFinite(e));
+
+    ci.classList.toggle('invalid', cb);
+    ei.classList.toggle('invalid', eb);
+
+    if (cb || eb) invalid = true;
+
+    if (c !== null && e !== null && !cb && !eb) {
+      const t = c + e;
+      const g = grade(t);
+
+      tr.querySelector('.total').textContent = t;
+      tr.querySelector('.g').textContent = g;
+
+      sum += t;
+      cas += c;
+      exs += e;
+
+      marks.push({
+        name: tr.querySelector('.sub').value,
+        ca: c,
+        ex: e,
+        total: t,
+        average: t,
+        grade: g
+      });
+    } else {
+      tr.querySelector('.total').textContent = '—';
+      tr.querySelector('.g').textContent = '—';
+    }
+  });
+
+  const avg = marks.length ? sum / marks.length : null;
+  const g = avg === null ? '' : grade(avg);
+
+  $('grandTotal').textContent = marks.length ? sum : '—';
+  $('average').textContent = avg === null ? '—' : avg.toFixed(1);
+
+  $('overallGrade').textContent = g || '—';
+
+  $('highestMark').textContent = marks.length
+    ? Math.max(...marks.map(m => m.total))
+    : '—';
+
+  $('lowestMark').textContent = marks.length
+    ? Math.min(...marks.map(m => m.total))
+    : '—';
+
+  $('teacherComment').value = g ? teacherText(g) : '';
+  $('proprietorComment').value = g ? proprietorText(g) : '';
+
+  $('validationMessage').textContent = invalid
+    ? 'ERROR: CA must be 0–40 and Exam must be 0–60. Correct red fields before printing.'
+    : '';
+
+  update({ marks, sum, cas, exs, avg, g, invalid });
+
+  return { marks, sum, cas, exs, avg, g, invalid };
+}
+
+/* QR REPORT DATA */
+
+function reportPayload(d) {
+  return {
+    v: 1,
+    school: 'GALADIMA JAKADA ACADEMY',
+    student: $('studentName').value.trim(),
+    admission: admission(),
+    class: $('className').value,
+    session: $('session').value,
+    term: $('term').value,
+    classSize: $('classSize').value,
+
+    subjects: d.marks.map(m => ({
+      subject: m.name,
+      ca: m.ca,
+      exam: m.ex,
+      total: m.total,
+      average: m.average,
+      grade: m.grade
+    })),
+
+    grandTotal: d.sum,
+    average: d.avg,
+
+    highest: d.marks.length
+      ? Math.max(...d.marks.map(x => x.total))
+      : null,
+
+    lowest: d.marks.length
+      ? Math.min(...d.marks.map(x => x.total))
+      : null,
+
+    overallGrade: d.g,
+    teacherComment: $('teacherComment').value,
+    proprietorComment: $('proprietorComment').value,
+    generated: new Date().toISOString()
+  };
+}
+
+/* UPDATE REPORT PREVIEW */
+
+function update(d) {
+  $('outTerm').textContent = $('term').value.toUpperCase();
+  $('outSession').textContent = $('session').value;
+  $('outClass').textContent = $('className').value.toUpperCase();
+
+  $('outStudentName').textContent =
+    $('studentName').value.trim() || '—';
+
+  $('outAdmission').textContent = admission();
+  $('outClassSize').textContent = $('classSize').value || '—';
+
+  $('outTimestamp').textContent = new Date().toLocaleString(
+    'en-GB',
+    {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    }
+  );
+
+  $('outTeacherName').textContent =
+    $('teacherName').value.trim() || '________________';
+
+  $('outProprietorName').textContent = 'HADIZA HABIBU ILU';
+
+  $('outTeacherComment').textContent =
+    $('teacherComment').value ||
+    'Comments will appear automatically after valid marks are entered.';
+
+  $('outProprietorComment').textContent =
+    $('proprietorComment').value ||
+    'A separate proprietor comment will appear automatically.';
+
+  $('outCATotal').textContent = d.marks.length ? d.cas : '—';
+  $('outExamTotal').textContent = d.marks.length ? d.exs : '—';
+  $('outGrandTotal').textContent = d.marks.length ? d.sum : '—';
+
+  $('outAverageGrand').textContent =
+    d.avg === null ? '—' : d.avg.toFixed(1);
+
+  $('outAverage').textContent =
+    d.avg === null ? '—' : d.avg.toFixed(1);
+
+  $('outOverallGrade').textContent = d.g || '—';
+
+  $('outHighest').textContent = d.marks.length
+    ? Math.max(...d.marks.map(m => m.total))
+    : '—';
+
+  $('outLowest').textContent = d.marks.length
+    ? Math.min(...d.marks.map(m => m.total))
+    : '—';
+
+  // Overall Performance now displays A, B, C, D, E or F.
+  $('outPerformance').textContent = d.g || '—';
+
+  const body = $('reportSubjectRows');
+  body.innerHTML = '';
+
+  const target = early() ? 6 : 10;
+  const arr = [...d.marks];
+
+  while (arr.length < target) {
+    arr.push({ empty: true });
+  }
+
+  arr.forEach(m => {
+    const tr = document.createElement('tr');
+
+    if (m.empty) {
+      tr.innerHTML = `
+        <td>&nbsp;</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      `;
+    } else {
+      tr.innerHTML = `
+        <td>${esc(m.name)}</td>
+        <td>${m.ca}</td>
+        <td>${m.ex}</td>
+        <td><b>${m.total}</b></td>
+        <td>${m.average.toFixed(1)}</td>
+        <td><b>${m.grade}</b></td>
+        <td>${remark(m.grade)}</td>
+      `;
+    }
+
+    body.appendChild(tr);
+  });
+
+  makeQr(reportPayload(d));
+}
+
+/* QR GENERATION */
+
+let qrReadyResolve;
+let qrReadyPromise = Promise.resolve(false);
+let qrTimer = null;
+
+function makeQr(payload) {
+  const target = $('reportQr');
+
+  target.innerHTML = '';
+  target.dataset.ready = 'false';
+
+  if (qrTimer) clearTimeout(qrTimer);
+
+  qrReadyPromise = new Promise(resolve => {
+    qrReadyResolve = resolve;
+  });
+
+  if (
+    window.AndroidBridge &&
+    typeof AndroidBridge.generateQr === 'function'
+  ) {
+    qrTimer = setTimeout(() => {
+      try {
+        AndroidBridge.generateQr(
+          JSON.stringify(payload),
+          'onQrReady'
+        );
+      } catch (e) {
+        window.onQrError(String(e));
+      }
+    }, 180);
+  } else {
+    target.setAttribute(
+      'aria-label',
+      'QR code is available in the Android app'
+    );
+
+    qrReadyResolve(false);
+  }
+}
+
+window.onQrReady = function(base64) {
+  const target = $('reportQr');
+
+  if (!base64) {
+    window.onQrError('Empty QR image');
+    return;
+  }
+
+  const img = document.createElement('img');
+
+  img.alt = 'Student report QR code';
+
+  img.onload = () => {
+    target.innerHTML = '';
+    target.appendChild(img);
+    target.dataset.ready = 'true';
+
+    if (qrReadyResolve) qrReadyResolve(true);
+  };
+
+  img.onerror = () => {
+    window.onQrError('QR image could not be displayed');
+  };
+
+  img.src = 'data:image/png;base64,' + base64;
+};
+
+window.onQrError = function(message) {
+  const target = $('reportQr');
+
+  target.innerHTML = '<span class="qr-error">QR generation failed</span>';
+  target.dataset.ready = 'false';
+
+  if (qrReadyResolve) qrReadyResolve(false);
+
+  console.error('GJA QR:', message);
+};
+
+/* VALIDATE BEFORE PRINTING */
+
+function validPrint() {
+  const d = calc();
+  const missing = [];
+
+  if (!$('studentName').value.trim()) {
+    missing.push('student name');
+  }
+
+  if (!$('admissionSuffix').value.trim()) {
+    missing.push('admission number suffix');
+  }
+
+  if (
+    !$('classSize').value ||
+    Number($('classSize').value) < 1
+  ) {
+    missing.push('class size');
+  }
+
+  const rows = [...document.querySelectorAll('#subjectRows tr')];
+
+  if (!rows.length) {
+    missing.push('at least one subject');
+  }
+
+  if (
+    rows.some(r =>
+      val(r.querySelector('.ca')) === null ||
+      val(r.querySelector('.ex')) === null
+    )
+  ) {
+    missing.push('all CA and Exam marks');
+  }
+
+  if (missing.length || d.invalid) {
+    $('validationMessage').textContent =
+      'Please correct before printing: ' +
+      missing.join(', ') +
+      (d.invalid ? ' and invalid marks.' : '.');
+
+    return false;
+  }
+
+  return true;
+}
+
+/* PDF FILE NAME */
+
+function safePart(s) {
+  return String(s || '')
+    .trim()
+    .replace(/[^\p{L}\p{N}-]+/gu, '_')
+    .replace(/^_+|_+$/g, '');
+}
+
+/* PRINT / SAVE AS PDF */
+
+async function printReport() {
+  if (!validPrint()) return;
+
+  const studentName =
+    safePart($('studentName').value) || 'Student_Report';
+
+  const fileName = studentName + '.pdf';
+
+  if (
+    window.AndroidBridge &&
+    typeof AndroidBridge.printReport === 'function'
+  ) {
+    const qrOK = await Promise.race([
+      qrReadyPromise,
+      new Promise(resolve => setTimeout(() => resolve(false), 5000))
+    ]);
+
+    if (!qrOK) {
+      $('validationMessage').textContent =
+        'QR Code bai gama samarwa ba. Da fatan za a sake danna Update Report Preview sannan a gwada.';
+
+      return;
+    }
+
+    await waitForReportImages();
+
+    AndroidBridge.printReport(fileName);
+
+  } else {
+    await waitForReportImages();
+
+    const oldTitle = document.title;
+
+    document.title = studentName;
+
+    window.print();
+
+    window.onafterprint = () => {
+      document.title = oldTitle;
+    };
+  }
+}
+
+/* WAIT FOR REPORT IMAGES */
+
+function waitForReportImages() {
+  const imgs = [
+    ...$('reportCard').querySelectorAll('img')
+  ];
+
+  return Promise.all(
+    imgs.map(img => {
+      if (img.complete) return Promise.resolve();
+
+      return new Promise(resolve => {
+        img.onload = resolve;
+        img.onerror = resolve;
+        setTimeout(resolve, 4000);
+      });
+    })
+  );
+}
+
+/* FORM EVENTS */
+
+$('session').addEventListener('change', calc);
+
+[
+  'term',
+  'className',
+  'studentName',
+  'admissionSuffix',
+  'classSize',
+  'teacherName'
+].forEach(id => {
+  $(id).addEventListener('input', calc);
+});
+
+$('className').addEventListener('change', () => {
+  loadClassSubjects();
+  calc();
+});
+
+$('addSubject').onclick = () => {
+  $('subjectRows').appendChild(makeRow());
+  calc();
+};
+
+$('previewBtn').onclick = () => {
+  calc();
+
+  $('reportCard').scrollIntoView({
+    behavior: 'smooth',
+    block: 'start'
+  });
+};
+
+$('printBtn').onclick = printReport;
+
+/* STUDENT PHOTO */
+
+$('studentPhoto').addEventListener('change', e => {
+  const f = e.target.files[0];
+
+  if (!f) {
+    $('reportPhoto').style.display = 'none';
+    $('reportPhoto').nextElementSibling.style.display = 'block';
+    return;
+  }
+
+  const r = new FileReader();
+
+  r.onload = x => {
+    $('reportPhoto').src = x.target.result;
+    $('reportPhoto').style.display = 'block';
+    $('reportPhoto').nextElementSibling.style.display = 'none';
+  };
+
+  r.readAsDataURL(f);
+});
+
+/* TEACHER SIGNATURE */
+
+const sigCanvas = $('signatureCanvas');
+const sigCtx = sigCanvas.getContext('2d');
+
+let drawing = false;
+let signatureHasInk = false;
+
+sigCtx.strokeStyle = '#111';
+sigCtx.lineWidth = 4;
+sigCtx.lineCap = 'round';
+sigCtx.lineJoin = 'round';
+
+function sigPoint(e) {
+  const r = sigCanvas.getBoundingClientRect();
+
+  return {
+    x: (e.clientX - r.left) * sigCanvas.width / r.width,
+    y: (e.clientY - r.top) * sigCanvas.height / r.height
+  };
+}
+
+sigCanvas.addEventListener('pointerdown', e => {
+  drawing = true;
+  signatureHasInk = true;
+
+  sigCanvas.setPointerCapture(e.pointerId);
+
+  const p = sigPoint(e);
+
+  sigCtx.beginPath();
+  sigCtx.moveTo(p.x, p.y);
+});
+
+sigCanvas.addEventListener('pointermove', e => {
+  if (!drawing) return;
+
+  const p = sigPoint(e);
+
+  sigCtx.lineTo(p.x, p.y);
+  sigCtx.stroke();
+
+  $('reportTeacherSignature').src =
+    sigCanvas.toDataURL('image/png');
+
+  $('reportTeacherSignature').style.display = 'block';
+});
+
+function stopDraw() {
+  if (drawing) {
+    drawing = false;
+
+    $('reportTeacherSignature').src =
+      sigCanvas.toDataURL('image/png');
+
+    $('reportTeacherSignature').style.display =
+      signatureHasInk ? 'block' : 'none';
+  }
+}
+
+sigCanvas.addEventListener('pointerup', stopDraw);
+sigCanvas.addEventListener('pointercancel', stopDraw);
+
+$('clearSignature').onclick = () => {
+  sigCtx.clearRect(
+    0,
+    0,
+    sigCanvas.width,
+    sigCanvas.height
+  );
+
+  signatureHasInk = false;
+
+  $('reportTeacherSignature').removeAttribute('src');
+  $('reportTeacherSignature').style.display = 'none';
+};
+
+/* RESET FORM */
+
+$('resetBtn').addEventListener('click', () => {
+  setTimeout(() => {
+    loadClassSubjects();
+
+    $('reportPhoto').removeAttribute('src');
+    $('reportPhoto').style.display = 'none';
+    $('reportPhoto').nextElementSibling.style.display = 'block';
+
+    sigCtx.clearRect(
+      0,
+      0,
+      sigCanvas.width,
+      sigCanvas.height
+    );
+
+    signatureHasInk = false;
+
+    $('reportTeacherSignature').removeAttribute('src');
+    $('reportTeacherSignature').style.display = 'none';
+
+    calc();
+  }, 0);
+});
+
+/* LOAD CLASS SUBJECTS */
+
+function loadClassSubjects() {
+  const list =
+    subjectSettings[$('className').value] ||
+    BASE_SUBJECTS[$('className').value];
+
+  $('subjectRows').innerHTML = '';
+
+  list.forEach(s => {
+    $('subjectRows').appendChild(makeRow(s));
+  });
+}
+
+/* SUBJECT MANAGER */
+
+function openManager() {
+  const sel = $('manageClass');
+
+  sel.innerHTML = '';
+
+  CLASSES.forEach(c => {
+    const o = document.createElement('option');
+
+    o.value = c;
+    o.textContent = c;
+
+    sel.appendChild(o);
+  });
+
+  sel.value = $('className').value;
+
+  renderManagedSubjects();
+
+  $('subjectManager').hidden = false;
+}
+
+function renderManagedSubjects() {
+  const c = $('manageClass').value;
+  const wrap = $('managedSubjects');
+
+  wrap.innerHTML = '';
+
+  (subjectSettings[c] || []).forEach((s, i) => {
+    const row = document.createElement('div');
+    row.className = 'managed-row';
+
+    const input = document.createElement('input');
+    input.value = s;
+    input.setAttribute('aria-label', 'Subject name');
+
+    const save = document.createElement('button');
+    save.type = 'button';
+    save.className = 'secondary-btn';
+    save.textContent = 'Save';
+
+    save.onclick = () => {
+      if (input.value.trim()) {
+        subjectSettings[c][i] = input.value.trim();
+
+        saveSubjectSettings();
+        renderManagedSubjects();
+
+        if (c === $('className').value) {
+          loadClassSubjects();
+        }
+
+        calc();
+      }
+    };
+
+    const del = document.createElement('button');
+    del.type = 'button';
+    del.className = 'secondary-btn';
+    del.textContent = 'Remove';
+
+    del.onclick = () => {
+      subjectSettings[c].splice(i, 1);
+
+      saveSubjectSettings();
+      renderManagedSubjects();
+
+      if (c === $('className').value) {
+        loadClassSubjects();
+      }
+
+      calc();
+    };
+
+    row.append(input, save, del);
+    wrap.appendChild(row);
+  });
+}
+
+$('manageSubjectsBtn').onclick = openManager;
+
+$('closeSubjectManager').onclick = () => {
+  $('subjectManager').hidden = true;
+};
+
+$('manageClass').onchange = renderManagedSubjects;
+
+$('saveNewSubject').onclick = () => {
+  const s = $('newSubjectName').value.trim();
+  const c = $('manageClass').value;
+
+  if (!s) return;
+
+  subjectSettings[c] = subjectSettings[c] || [];
+  subjectSettings[c].push(s);
+
+  $('newSubjectName').value = '';
+
+  saveSubjectSettings();
+  renderManagedSubjects();
+
+  if (c === $('className').value) {
+    loadClassSubjects();
+  }
+
+  calc();
+};
+
+/* SUBJECT AUTOCOMPLETE */
+
+const dl = document.createElement('datalist');
+
+dl.id = 'subjectOptions';
+
+[
+  ...new Set(Object.values(BASE_SUBJECTS).flat())
+].forEach(s => {
+  const o = document.createElement('option');
+
+  o.value = s;
+  dl.appendChild(o);
+});
+
+document.body.appendChild(dl);
+
+/* INITIAL LOAD */
+
+loadClassSubjects();
+calc();

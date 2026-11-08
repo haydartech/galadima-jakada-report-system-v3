@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#092D4F">
+<title>GALADIMA JAKADA ACADEMY | Report Card</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="app-shell">
+
+<header class="app-heading">
+<div class="school-mark"><img src="assets/logo.png" alt="GJA"></div>
+<div>
+<h1>GALADIMA JAKADA ACADEMY</h1>
+<p>STUDENT REPORT CARD GENERATOR</p>
+<small>Opposite Idil Ground, Jahun Gabas, Jahun Local Government</small>
+</div>
+</header>
+
+<div class="notice">
+<b>Offline use:</b> This application is 100% offline use, but in some circumtences may <code>Synchronize in Google drive</code>.
+</div>
+
+<form id="reportForm" class="form-panel" autocomplete="off">
+<h2>Report Details</h2>
+
+<div class="form-grid">
+<label>Academic Session
+<select id="session">
+<option>2026/2027</option>
+<option>2027/2028</option>
+<option>2028/2029</option>
+<option>2029/2030</option>
+<option>2030/2031</option>
+<option>2031/2032</option>
+<option>2032/2033</option>
+<option>2033/2034</option>
+<option>2034/2035</option>
+<option>2035/2036</option>
+</select>
+</label>
+
+<label>Term
+<select id="term">
+<option>First Term</option>
+<option>Second Term</option>
+<option>Third Term</option>
+</select>
+</label>
+
+<label>Class
+<select id="className">
+<option>Pre-Nursery</option>
+<option>Nursery 1</option>
+<option>Nursery 2</option>
+<option>Primary 1</option>
+<option>Primary 2</option>
+<option>Primary 3</option>
+<option>Primary 4</option>
+<option>Primary 5</option>
+</select>
+</label>
+
+<label>Student Name
+<input id="studentName" required placeholder="Enter full name">
+</label>
+
+<label>Admission Number
+<div class="admission-field">
+<span id="admissionPrefix">GJA/2026/</span>
+<input id="admissionSuffix" inputmode="numeric" maxlength="4" placeholder="0001" required>
+</div>
+</label>
+
+<label>Number of Students in Class
+<input id="classSize" type="number" min="1" placeholder="e.g. 35" required>
+</label>
+
+<label>Class Teacher
+<input id="teacherName" placeholder="Teacher's name">
+</label>
+
+<label>Head Teacher / Proprietor
+<input value="HADIZA HABIBU ILU" readonly>
+</label>
+
+<label>Student Passport Photo
+<input id="studentPhoto" type="file" accept="image/*">
+</label>
+</div>
+
+<div class="subject-heading">
+<h2>Subject Marks</h2>
+<button type="button" class="secondary-btn" id="addSubject">+ Add Subject</button>
+</div>
+
+<div class="subject-tools"><button type="button" class="secondary-btn" id="manageSubjectsBtn">Manage Class Subjects</button><span id="subjectSaveStatus" class="helper">Subject lists are saved on this device.</span></div>
+<p class="helper">CA maximum: 40. Exam maximum: 60. Invalid marks are highlighted in red.</p>
+
+<div class="table-scroll">
+<table class="entry-table">
+<thead>
+<tr>
+<th>Subject</th>
+<th>CA  40</th>
+<th>Exam  60</th>
+<th>Total  100</th>
+<th>Grade</th>
+<th></th>
+</tr>
+</thead>
+<tbody id="subjectRows"></tbody>
+</table>
+</div>
+
+<div class="summary-grid">
+<div><span>Grand Total</span><strong id="grandTotal">—</strong></div>
+<div><span>Average</span><strong id="average">—</strong></div>
+<div><span>Overall Grade</span><strong id="overallGrade">—</strong></div>
+<div><span>Highest Subject Mark</span><strong id="highestMark">—</strong></div>
+<div><span>Lowest Subject Mark</span><strong id="lowestMark">—</strong></div>
+</div>
+
+<div class="form-grid comments-inputs">
+<label>Class Teacher Comment (automatic)
+<textarea id="teacherComment" readonly rows="3"></textarea>
+</label>
+
+<label>Proprietor Comment (automatic)
+<textarea id="proprietorComment" readonly rows="3"></textarea>
+</label>
+</div>
+
+<section class="signature-pad-panel">
+<h2>Class Teacher Signature</h2>
+<p class="helper">Use your finger or mouse to sign in the box. The signature is used for this report only and is not saved.</p>
+<canvas id="signatureCanvas" width="900" height="220" aria-label="Draw class teacher signature here"></canvas>
+<div>
+<button type="button" id="clearSignature" class="secondary-btn">Clear Signature</button>
+</div>
+</section>
+
+<div id="validationMessage" class="validation-message" role="alert"></div>
+
+<div class="actions">
+<button type="button" id="previewBtn" class="primary-btn">Update Report Preview</button>
+<button type="button" id="printBtn" class="primary-btn">Print / Save as PDF</button>
+<button type="reset" id="resetBtn" class="secondary-btn">Clear Form</button>
+</div>
+<section id="subjectManager" class="modal-panel" hidden>
+<div class="modal-card"><div class="modal-head"><h2>Manage Subjects</h2><button type="button" id="closeSubjectManager" class="secondary-btn">Close</button></div>
+<p class="helper">Choose a class, then add, rename or remove its subjects. Changes are saved on this device.</p>
+<label>Class<select id="manageClass"></select></label><div id="managedSubjects" class="managed-subjects"></div>
+<div class="manage-add"><input id="newSubjectName" placeholder="New subject name"><button type="button" id="saveNewSubject" class="primary-btn">Add Subject</button></div>
+</div></section>
+</form>
+
+
+
+<section class="report-wrap">
+<article id="reportCard" class="report-card">
+<div class="report-border">
+
+<div class="watermark">
+<img src="assets/logo.png" alt="">
+</div>
+
+<header class="report-header">
+<div class="logo-slot">
+<img id="reportLogo" src="assets/logo.png" alt="School logo" onerror="this.style.display='none'">
+</div>
+
+<div class="school-title">
+<h2>GALADIMA JAKADA ACADEMY</h2>
+<p>Opposite Idil Ground, Jahun Gabas, Jahun Local Government, Jigawa state</p>
+<div class="report-title">PUPIL'S ACADEMIC REPORT CARD</div>
+</div>
+
+<div class="passport-slot">
+<img id="reportPhoto" alt="Student passport photo">
+<span>PASSPORT</span>
+</div>
+</header>
+
+<div class="session-band">
+<span id="outTerm">FIRST TERM</span>
+<span>SESSION: <b id="outSession">2026/2027</b></span>
+<span>CLASS: <b id="outClass">PRE-NURSERY</b></span>
+</div>
+
+<section class="student-details">
+<div><b>Student Name:</b> <span id="outStudentName">—</span></div>
+<div><b>Admission No.:</b> <span id="outAdmission">GJA/2026/0001</span></div>
+<div><b>Total Number of Pupils in Class:</b> <span id="outClassSize">—</span></div>
+</section>
+
+<table class="report-table">
+<thead>
+<tr>
+<th class="subject-col">SUBJECT</th>
+<th>CA<br><small>/40</small></th>
+<th>EXAM<br><small>/60</small></th>
+<th>TOTAL<br><small>/100</small></th>
+<th>AVERAGE</th>
+<th>GRADE</th>
+<th>REMARK</th>
+</tr>
+</thead>
+
+<tbody id="reportSubjectRows"></tbody>
+
+<tfoot>
+<tr>
+<th>GRAND TOTAL</th>
+<td id="outCATotal">—</td>
+<td id="outExamTotal">—</td>
+<td id="outGrandTotal">—</td>
+<td id="outAverageGrand">—</td>
+<td id="outOverallGrade">—</td>
+<td>—</td>
+</tr>
+</tfoot>
+</table>
+
+<section class="stats-row">
+<div><b>Average:</b> <span id="outAverage">—</span></div>
+<div><b>Highest Mark:</b> <span id="outHighest">—</span></div>
+<div><b>Lowest Mark:</b> <span id="outLowest">—</span></div>
+<div><b>Performance Position:</b> <span id="outPerformance">—</span></div>
+</section>
+
+<section class="comment-box">
+<h3>CLASS TEACHER'S COMMENT</h3>
+<p id="outTeacherComment">Comments will appear automatically after marks are entered.</p>
+
+<div class="signature-line">
+<span>Class Teacher: <b id="outTeacherName">________________</b></span>
+<span class="teacher-signature">
+<img id="reportTeacherSignature" alt="Class teacher signature">
+</span>
+</div>
+</section>
+
+<section class="comment-box">
+<h3>HEAD TEACHER / PROPRIETOR'S COMMENT</h3>
+<p id="outProprietorComment">A separate proprietor comment will appear automatically.</p>
+
+<div class="signature-line">
+<span>Proprietor: <b id="outProprietorName">HADIZA HABIBU ILU</b></span>
+<span class="prop-signature">
+<img id="reportProprietorSignature" src="assets/proprietor-signature.png" alt="Proprietor signature" onerror="this.style.display='none'">
+</span>
+</div>
+</section>
+
+<section class="qr-area"><div id="reportQr" class="qr-code" aria-label="Student report QR code"></div><div><b>REPORT VERIFICATION</b><small>Scan to view this pupil’s report details</small></div></section>
+
+<footer class="report-footer">
+<div class="stamp-area">
+<img id="reportStamp" src="assets/stamp.png" alt="School stamp" onerror="this.style.display='none'">
+<span>OFFICIAL SCHOOL STAMP</span>
+</div>
+
+<div class="footer-note">
+<div>GALADIMA JAKADA ACADEMY • Learning Today, Leading Tomorrow</div>
+<div class="footer-timestamp">Generated: <span id="outTimestamp">—</span></div>
+</div>
+</footer>
+
+</div>
+</article>
+</section>
+
+<section class="scanner-panel"><h2>QR Report Scanner</h2><p>Use the camera scanner or choose a report image from Gallery. This tool is separate from the printable report card.</p><div class="actions"><button type="button" id="startScanner" class="primary-btn">Open Camera Scanner</button><label class="gallery-button">Scan from Gallery<input id="qrGallery" type="file" accept="image/*"></label></div><pre id="scanResult" class="scan-result" hidden></pre></section>
+
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

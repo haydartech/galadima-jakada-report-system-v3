@@ -1,0 +1,1214 @@
+
+/* =====================================================
+   GALADIMA JAKADA ACADEMY
+   COMPLETE RESPONSIVE & A4 REPORT CARD STYLESHEET
+   UPDATED VERSION
+   ===================================================== */
+
+:root {
+    --navy: #092D4F;
+    --gold: #F2AE24;
+    --ash: #D9DADD;
+    --grey: #68717B;
+    --dark: #172B3A;
+    --line: #263D50;
+    --danger: #B42318;
+    --white: #ffffff;
+    --light: #F3F5F7;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    background: #EDF1F5;
+    color: var(--dark);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+/* =====================================================
+   APPLICATION DASHBOARD
+   ===================================================== */
+
+.app-shell {
+    width: 100%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 22px;
+}
+
+.app-heading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    background: var(--navy);
+    color: var(--white);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: left;
+    border-bottom: 5px solid var(--gold);
+}
+
+.school-mark {
+    width: 85px;
+    height: 85px;
+    flex: 0 0 85px;
+    background: white;
+    border-radius: 8px;
+    padding: 5px;
+}
+
+.school-mark img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.app-heading h1 {
+    margin: 0;
+    font-size: 25px;
+    font-weight: 800;
+    letter-spacing: .5px;
+}
+
+.app-heading p {
+    margin: 5px 0;
+    color: var(--gold);
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.app-heading small {
+    display: block;
+    font-size: 12px;
+}
+
+.notice {
+    margin: 15px 0;
+    padding: 12px 15px;
+    background: #FFF5D9;
+    border-left: 4px solid var(--gold);
+    border-radius: 5px;
+    font-size: 13px;
+}
+
+/* =====================================================
+   FORM PANEL
+   ===================================================== */
+
+.form-panel {
+    background: var(--white);
+    padding: 22px;
+    border-radius: 10px;
+    box-shadow: 0 3px 15px rgba(0,0,0,.06);
+    margin-bottom: 25px;
+}
+
+.form-panel h2,
+.signature-pad-panel h2 {
+    color: var(--navy);
+    margin: 0 0 15px;
+    font-size: 19px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.form-grid label,
+.modal-card label {
+    display: block;
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 13px;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    margin-top: 6px;
+    padding: 11px;
+    border: 1px solid #C9D1D9;
+    border-radius: 6px;
+    background: white;
+    color: var(--dark);
+    outline: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--navy);
+    box-shadow: 0 0 0 2px rgba(9,45,79,.10);
+}
+
+input[readonly] {
+    background: #EEF1F4;
+}
+
+.admission-field {
+    display: flex;
+    align-items: center;
+    margin-top: 6px;
+}
+
+.admission-field span {
+    padding: 11px 8px;
+    background: var(--navy);
+    color: white;
+    font-size: 12px;
+    border-radius: 6px 0 0 6px;
+    white-space: nowrap;
+}
+
+.admission-field input {
+    margin: 0;
+    border-radius: 0 6px 6px 0;
+    min-width: 0;
+}
+
+.subject-heading,
+.modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.subject-heading h2 {
+    margin: 0;
+    color: var(--navy);
+}
+
+.subject-tools {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 12px 0;
+}
+
+.helper {
+    font-size: 12px;
+    color: var(--grey);
+}
+
+.subject-tools .helper {
+    margin: 0;
+}
+
+/* =====================================================
+   BUTTONS
+   ===================================================== */
+
+.primary-btn,
+.secondary-btn {
+    border: none;
+    border-radius: 6px;
+    padding: 11px 17px;
+    font-weight: bold;
+    transition: .2s;
+}
+
+.primary-btn {
+    background: var(--navy);
+    color: white;
+}
+
+.primary-btn:hover {
+    background: #154D78;
+}
+
+.secondary-btn {
+    background: var(--ash);
+    color: var(--navy);
+}
+
+.secondary-btn:hover {
+    background: #C4C8CD;
+}
+
+.validation-message {
+    margin: 12px 0;
+    color: var(--danger);
+    font-weight: bold;
+    font-size: 13px;
+}
+
+/* =====================================================
+   SUBJECT ENTRY TABLE
+   ===================================================== */
+
+.table-scroll {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.entry-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+.entry-table th {
+    background: var(--navy);
+    color: white;
+    padding: 11px 8px;
+    font-size: 12px;
+}
+
+.entry-table td {
+    padding: 7px;
+    border-bottom: 1px solid #DCE1E6;
+}
+
+.entry-table input,
+.entry-table select {
+    margin: 0;
+    padding: 8px;
+    font-size: 13px;
+}
+
+.invalid,
+input.invalid {
+    border: 2px solid var(--danger) !important;
+    background: #FFF0EF !important;
+}
+
+/* =====================================================
+   SUMMARY
+   ===================================================== */
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.summary-grid > div {
+    background: #F1F4F7;
+    border-left: 3px solid var(--gold);
+    padding: 12px;
+    border-radius: 5px;
+}
+
+.summary-grid span {
+    display: block;
+    font-size: 11px;
+    color: var(--grey);
+}
+
+.summary-grid strong {
+    display: block;
+    margin-top: 5px;
+    color: var(--navy);
+    font-size: 19px;
+}
+
+.comments-inputs {
+    margin-top: 15px;
+}
+
+.comments-inputs textarea {
+    resize: vertical;
+}
+
+/* =====================================================
+   TEACHER SIGNATURE CANVAS
+   ===================================================== */
+
+.signature-pad-panel {
+    margin-top: 22px;
+    padding: 15px;
+    border: 1px solid #D7DDE3;
+    border-radius: 8px;
+}
+
+.signature-pad-panel canvas {
+    display: block;
+    width: 100%;
+    height: 130px;
+    background: #FAFAFA;
+    border: 1px dashed #8A969F;
+    border-radius: 5px;
+    touch-action: none;
+}
+
+/* =====================================================
+   ACTION BUTTONS
+   ===================================================== */
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.actions button {
+    flex: 1 1 150px;
+}
+
+/* =====================================================
+   SUBJECT MANAGER
+   ===================================================== */
+
+.modal-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0,0,0,.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+}
+
+.modal-panel[hidden] {
+    display: none !important;
+}
+
+.modal-card {
+    width: 100%;
+    max-width: 550px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.modal-head {
+    margin-top: 0;
+}
+
+.managed-subjects {
+    margin: 15px 0;
+}
+
+.manage-add {
+    display: flex;
+    gap: 8px;
+}
+
+.manage-add input {
+    min-width: 0;
+}
+
+.gallery-button {
+    display: inline-flex;
+    align-items: center;
+    background: var(--navy);
+    color: white;
+    padding: 11px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.gallery-button input {
+    display: none;
+}
+
+/* =====================================================
+   REPORT PREVIEW - SCREEN
+   ===================================================== */
+
+.report-wrap {
+    width: 100%;
+    margin: 25px auto;
+    overflow-x: auto;
+}
+
+.report-card {
+    position: relative;
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    background: white;
+    color: #172B3A;
+    box-shadow: 0 5px 25px rgba(0,0,0,.15);
+    overflow: hidden;
+}
+
+.report-border {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    min-height: 297mm;
+    padding: 7mm;
+    border: 2px solid var(--navy);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 0;
+    box-sizing: border-box;
+}
+
+.watermark {
+    position: absolute;
+    z-index: -1;
+    top: 50%;
+    left: 50%;
+    width: 115mm;
+    height: 115mm;
+    transform: translate(-50%, -50%);
+    opacity: .055;
+    pointer-events: none;
+}
+
+.watermark img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* =====================================================
+   REPORT HEADER
+   ===================================================== */
+
+.report-header {
+    display: grid;
+    grid-template-columns: 25mm 1fr 25mm;
+    align-items: center;
+    gap: 4mm;
+    padding-bottom: 3mm;
+    border-bottom: 2px solid var(--navy);
+}
+
+.logo-slot {
+    width: 25mm;
+    height: 25mm;
+}
+
+.logo-slot img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.school-title {
+    text-align: center;
+}
+
+.school-title h2 {
+    margin: 0;
+    color: var(--navy);
+    font-size: 17px;
+    font-weight: 900;
+}
+
+.school-title p {
+    margin: 3px 0;
+    font-size: 9px;
+}
+
+.report-title {
+    display: inline-block;
+    margin-top: 4px;
+    padding: 4px 10px;
+    background: var(--navy);
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.passport-slot {
+    position: relative;
+    width: 25mm;
+    height: 29mm;
+    border: 1.5px solid #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: white;
+}
+
+.passport-slot img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.passport-slot span {
+    font-size: 8px;
+    color: #777;
+}
+
+/* =====================================================
+   SESSION AND STUDENT DETAILS
+   ===================================================== */
+
+.session-band {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 9px;
+    background: var(--navy);
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    margin-top: 1mm;
+}
+
+.session-band span:first-child {
+    color: var(--gold);
+}
+
+.student-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px 15px;
+    padding: 6px 2px;
+    font-size: 10px;
+}
+
+.student-details > div {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.student-details > div:last-child {
+    grid-column: 1 / -1;
+}
+
+/* =====================================================
+   REPORT SUBJECT TABLE
+   ===================================================== */
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: 9px;
+    margin: 0;
+}
+
+.report-table th,
+.report-table td {
+    border: 1px solid #34495A;
+    text-align: center;
+    padding: 4px 3px;
+    overflow-wrap: anywhere;
+}
+
+.report-table thead th {
+    background: var(--navy);
+    color: white;
+    font-size: 9px;
+    line-height: 1.2;
+}
+
+.report-table th small {
+    font-size: 8px;
+}
+
+.report-table .subject-col {
+    width: 27%;
+    text-align: left;
+}
+
+.report-table tbody td:first-child {
+    text-align: left;
+    font-weight: bold;
+}
+
+.report-table tbody tr {
+    height: 7mm;
+}
+
+.report-table tfoot th,
+.report-table tfoot td {
+    background: var(--gold);
+    color: var(--navy);
+    font-weight: bold;
+    border: 1px solid var(--navy);
+    padding: 5px 3px;
+}
+
+/* =====================================================
+   REPORT STATISTICS
+   ===================================================== */
+
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+    padding: 7px 5px;
+    border: 1px solid #B9C3CC;
+    background: rgba(255,255,255,.65);
+    font-size: 9px;
+    margin: 0;
+}
+
+.stats-row > div {
+    text-align: center;
+}
+
+.stats-row b {
+    color: var(--navy);
+}
+
+/* =====================================================
+   COMMENTS AND SIGNATURES
+   ===================================================== */
+
+.comment-box {
+    border: 1px solid #AAB5BF;
+    padding: 7px 9px;
+    margin: 0;
+    background: rgba(255,255,255,.65);
+}
+
+.comment-box h3 {
+    margin: 0 0 4px;
+    padding-bottom: 3px;
+    border-bottom: 1px solid var(--gold);
+    color: var(--navy);
+    font-size: 9px;
+}
+
+.comment-box p {
+    margin: 3px 0 6px;
+    font-size: 9px;
+    line-height: 1.3;
+}
+
+.signature-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 10px;
+    min-height: 13mm;
+    font-size: 9px;
+}
+
+.teacher-signature,
+.prop-signature {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 35mm;
+    height: 12mm;
+}
+
+.teacher-signature img,
+.prop-signature img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.teacher-signature img:not([src]),
+.teacher-signature img[src=""] {
+    display: none;
+}
+
+/* =====================================================
+   QR CODE
+   ===================================================== */
+
+.qr-area {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 4mm;
+    padding: 1mm 0;
+    margin: 0;
+    min-height: 19mm;
+    break-inside: avoid;
+}
+
+.qr-code {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 17mm;
+    height: 17mm;
+    min-width: 17mm;
+    min-height: 17mm;
+    flex: 0 0 17mm;
+    overflow: hidden;
+    background: white;
+}
+
+.qr-code canvas,
+.qr-code img {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain;
+}
+
+.qr-area > div:last-child b {
+    display: block;
+    color: var(--navy);
+    font-size: 9px;
+}
+
+.qr-area small {
+    display: block;
+    margin-top: 3px;
+    font-size: 8px;
+}
+
+/* =====================================================
+   QR + FOOTER GROUP
+   ===================================================== */
+
+.report-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 1mm;
+    width: 100%;
+    flex-shrink: 0;
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+/* =====================================================
+   SCHOOL STAMP AND FOOTER
+   ===================================================== */
+
+.report-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5mm;
+    width: 100%;
+    padding-top: 2mm;
+    border-top: 1px solid var(--navy);
+    margin: 0;
+    break-inside: avoid;
+}
+
+.stamp-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 35mm;
+    min-height: 20mm;
+    flex: 0 0 35mm;
+}
+
+.stamp-area img {
+    display: block;
+    width: 32mm;
+    height: 17mm;
+    object-fit: contain;
+}
+
+.stamp-area span {
+    font-size: 7px;
+    font-weight: bold;
+    color: var(--navy);
+    text-align: center;
+}
+
+.footer-note {
+    flex: 1;
+    text-align: right;
+    font-size: 8px;
+    font-weight: bold;
+    color: var(--navy);
+}
+
+.footer-timestamp {
+    display: block;
+    margin-top: 3px;
+    color: var(--grey);
+    font-size: 8px;
+    font-weight: normal;
+}
+
+/* =====================================================
+   QR SCANNER
+   ===================================================== */
+
+.scanner-panel {
+    background: white;
+    padding: 20px;
+    margin: 25px 0;
+    border-radius: 10px;
+    box-shadow: 0 3px 12px rgba(0,0,0,.06);
+}
+
+.scanner-panel h2 {
+    color: var(--navy);
+    margin-top: 0;
+}
+
+.scan-result {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    background: #F1F4F7;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 12px;
+}
+
+/* =====================================================
+   RESPONSIVE - TABLETS AND PHONES
+   ===================================================== */
+
+@media screen and (max-width: 700px) {
+
+    .app-shell {
+        padding: 10px;
+    }
+
+    .app-heading {
+        padding: 14px;
+        gap: 10px;
+    }
+
+    .school-mark {
+        width: 60px;
+        height: 60px;
+        flex-basis: 60px;
+    }
+
+    .app-heading h1 {
+        font-size: 17px;
+    }
+
+    .app-heading p {
+        font-size: 11px;
+    }
+
+    .app-heading small {
+        font-size: 10px;
+    }
+
+    .form-panel {
+        padding: 14px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .report-wrap {
+        padding-bottom: 15px;
+    }
+
+    .report-card {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
+@media screen and (max-width: 400px) {
+
+    .app-heading {
+        align-items: flex-start;
+    }
+
+    .app-heading h1 {
+        font-size: 14px;
+    }
+
+    .summary-grid strong {
+        font-size: 16px;
+    }
+
+    .subject-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .actions button {
+        flex-basis: 100%;
+    }
+}
+
+/* =====================================================
+   PRINT - A4 PORTRAIT
+   ===================================================== */
+
+@page {
+    size: A4 portrait;
+    margin: 0;
+}
+
+@media print {
+
+    html,
+    body {
+        width: 210mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: white !important;
+        overflow: visible !important;
+    }
+
+    body {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .app-shell {
+        width: 210mm !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* Hide dashboard and scanner */
+    .app-heading,
+    .notice,
+    .form-panel,
+    .scanner-panel {
+        display: none !important;
+    }
+
+    .report-wrap {
+        display: block !important;
+        width: 210mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+    }
+
+    .report-card {
+        position: relative !important;
+        display: block !important;
+        width: 210mm !important;
+        min-height: 297mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: white !important;
+        box-shadow: none !important;
+        overflow: hidden !important;
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+    }
+
+    .report-border {
+        position: relative !important;
+        width: 210mm !important;
+        min-height: 297mm !important;
+        margin: 0 !important;
+        padding: 6mm 7mm !important;
+        border: 2px solid var(--navy) !important;
+
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        align-items: stretch !important;
+
+        gap: 0 !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+    }
+
+    .report-header {
+        flex-shrink: 0 !important;
+        margin: 0 0 1mm !important;
+    }
+
+    .session-band,
+    .student-details,
+    .report-table,
+    .stats-row,
+    .comment-box,
+    .report-bottom {
+        flex-shrink: 0 !important;
+    }
+
+    .session-band {
+        margin: 0 !important;
+    }
+
+    .student-details {
+        margin: 0 !important;
+        padding: 5px 2px !important;
+    }
+
+    .report-table {
+        margin: 0 !important;
+    }
+
+    .report-table tr {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+
+    .stats-row,
+    .comment-box {
+        margin: 0 !important;
+    }
+
+    .report-bottom {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1mm !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+
+    .report-bottom .qr-area {
+        margin: 0 !important;
+        padding: 1mm 0 !important;
+        flex-shrink: 0 !important;
+    }
+
+    .report-bottom .report-footer {
+        margin: 0 !important;
+        padding-top: 2mm !important;
+        flex-shrink: 0 !important;
+    }
+
+    .watermark {
+        display: block !important;
+        opacity: .055 !important;
+    }
+
+    .logo-slot img,
+    .passport-slot img,
+    .prop-signature img,
+    .teacher-signature img,
+    .stamp-area img,
+    .qr-code img,
+    .qr-code canvas {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .stamp-area img {
+        display: block !important;
+    }
+
+    .footer-timestamp {
+        display: block !important;
+    }
+
+    .qr-code {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .qr-code img {
+        display: block !important;
+    }
+
+    .validation-message {
+        display: none !important;
+    }
+}
+/* =====================================================
+   SAFE PRINT TEXT ENLARGEMENT
+   GALADIMA JAKADA ACADEMY
+   ===================================================== */
+
+@media print {
+
+    /* School name */
+    .school-title h2 {
+        font-size: 19px !important;
+    }
+
+    .school-title p {
+        font-size: 10px !important;
+    }
+
+    .report-title {
+        font-size: 12px !important;
+    }
+
+    /* Session and student information */
+    .session-band {
+        font-size: 11px !important;
+    }
+
+    .student-details {
+        font-size: 11px !important;
+    }
+
+    /* Subject table */
+    .report-table {
+        font-size: 10px !important;
+    }
+
+    .report-table thead th {
+        font-size: 10px !important;
+    }
+
+    .report-table th small {
+        font-size: 9px !important;
+    }
+
+    /* Statistics */
+    .stats-row {
+        font-size: 10px !important;
+    }
+
+    /* Comments */
+    .comment-box h3 {
+        font-size: 10px !important;
+    }
+
+    .comment-box p {
+        font-size: 10px !important;
+    }
+
+    /* Signatures */
+    .signature-line {
+        font-size: 10px !important;
+    }
+
+    /* QR information */
+    .qr-area > div:last-child b {
+        font-size: 10px !important;
+    }
+
+    .qr-area small {
+        font-size: 9px !important;
+    }
+
+    /* Footer */
+    .footer-note {
+        font-size: 9px !important;
+    }
+
+    .footer-timestamp {
+        font-size: 9px !important;
+    }
+}
