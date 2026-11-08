@@ -1,4 +1,6 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.CAMERA" />
 
@@ -31,18 +33,9 @@
             android:screenOrientation="portrait"
             android:stateNotNeeded="true"
             android:theme="@android:style/Theme.Material.Light.NoActionBar"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+            android:windowSoftInputMode="stateAlwaysHidden"
+            tools:replace="android:screenOrientation,android:theme" />
 
     </application>
 
-</manifest>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
-    <application android:theme="@android:style/Theme.Material.Light.NoActionBar" android:label="GJA Report Card" android:usesCleartextTraffic="false" android:allowBackup="false">
-        <activity android:name=".MainActivity" android:exported="true" android:screenOrientation="unspecified">
-            <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
-        </activity>
-        <activity android:name="com.journeyapps.barcodescanner.CaptureActivity" android:screenOrientation="portrait" android:stateNotNeeded="true" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:windowSoftInputMode="stateAlwaysHidden" />
-    </application>
 </manifest>
