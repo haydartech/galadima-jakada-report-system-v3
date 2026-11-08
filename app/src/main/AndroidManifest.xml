@@ -11,8 +11,6 @@
     <application
         android:theme="@android:style/Theme.Material.Light.NoActionBar"
         android:label="GJA Report Card"
-        android:icon="@mipmap/ic_launcher"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:usesCleartextTraffic="false"
         android:allowBackup="false">
 
